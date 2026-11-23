@@ -1,0 +1,12 @@
+venv/
+backend/venv/
+.env
+backend/.env
+*.db
+backend/*.db
+__pycache__/
+backend/__pycache__/
+old_reference/
+app.py
+main.py
+requirements.txt
