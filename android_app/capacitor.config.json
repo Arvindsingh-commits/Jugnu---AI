@@ -1,0 +1,12 @@
+﻿{
+  "appId": "com.arvindsingh.jugnuai",
+  "appName": "Jugnu AI",
+  "webDir": "www",
+  "server": {
+    "url": "https://jugnu-ai.onrender.com",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
