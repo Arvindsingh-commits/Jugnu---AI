@@ -32,16 +32,18 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Add Microphone & Internet Permissions + App Icon
+      - name: Add Permissions & Force Custom Jugnu Logo Icon
         working-directory: android_app
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           sed -i 's|<uses-permission android:name="android.permission.INTERNET" />|<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />|' "$MANIFEST"
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
           if [ -f "../website/assets/jugnu-logo.png" ]; then
             for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
               mkdir -p "android/app/src/main/res/$dir"
               cp "../website/assets/jugnu-logo.png" "android/app/src/main/res/$dir/ic_launcher.png"
               cp "../website/assets/jugnu-logo.png" "android/app/src/main/res/$dir/ic_launcher_round.png"
+              cp "../website/assets/jugnu-logo.png" "android/app/src/main/res/$dir/ic_launcher_foreground.png"
             done
           fi
 
