@@ -2,26 +2,54 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>जुगनू AI — आपका अपना AI साथी</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jugnu AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-    body { background: #0f1117; color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
-    .gold-glow { box-shadow: 0 0 20px rgba(250, 204, 21, 0.25); }
+    :root {
+      --bg-main: #090b10;
+      --bg-panel: #11151f;
+      --bg-card: #181d2a;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-col: #252b3b;
+    }
+    body.light-theme {
+      --bg-main: #f8fafc;
+      --bg-panel: #ffffff;
+      --bg-card: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-col: #e2e8f0;
+    }
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      transition: background 0.25s, color 0.25s;
+    }
+    .panel-bg { background: var(--bg-panel); border-color: var(--border-col); }
+    .card-bg { background: var(--bg-card); border-color: var(--border-col); }
+    .gold-glow { box-shadow: 0 0 24px rgba(250, 204, 21, 0.22); }
     .gold-text { background: linear-gradient(90deg, #fde047, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+    .prose pre { background: #0d1117; color: #e6edf3; padding: 10px; border-radius: 8px; overflow-x: auto; margin: 6px 0; font-size: 12px; }
+    .prose code { background: rgba(245, 158, 11, 0.15); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+    .prose p { margin-bottom: 6px; }
+    .prose ul, .prose ol { margin-left: 18px; list-style: disc; margin-bottom: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
   </style>
 </head>
-<body class="h-screen overflow-hidden flex flex-col">
+<body class="h-[100dvh] overflow-hidden flex flex-col">
 
   <!-- LOGIN / SIGNUP SCREEN -->
-  <div id="auth-screen" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-gray-950 via-gray-900 to-black">
-    <div class="w-full max-w-md bg-gray-900/90 border border-yellow-500/30 rounded-2xl p-6 gold-glow">
+  <div id="auth-screen" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
+    <div class="w-full max-w-md bg-gray-900/95 border border-yellow-500/30 rounded-2xl p-6 gold-glow">
       <div class="flex flex-col items-center mb-6">
         <img src="assets/jugnu-logo.png" onerror="this.style.display='none'" class="w-20 h-20 rounded-full object-cover border-2 border-yellow-400 mb-3 gold-glow" />
-        <h1 class="text-3xl font-extrabold gold-text">✨ जुगनू AI</h1>
-        <p class="text-gray-400 text-sm mt-1">आपका अपना AI साथी • Website & App</p>
+        <h1 class="text-3xl font-extrabold gold-text">Jugnu AI</h1>
+        <p class="text-gray-400 text-sm mt-1">आपका अपना AI साथी</p>
       </div>
 
       <div class="flex border-b border-gray-800 mb-4 text-sm font-medium">
@@ -30,14 +58,12 @@
         <button onclick="switchAuthTab('guest')" id="tab-guest" class="flex-1 py-2 text-gray-400">👤 Guest</button>
       </div>
 
-      <!-- Login Form -->
       <div id="form-login" class="space-y-3">
         <input id="login-user" type="text" placeholder="Username (जैसे: arvind)" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 focus:border-yellow-400 outline-none" />
         <input id="login-pass" type="password" placeholder="Password" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 focus:border-yellow-400 outline-none" />
         <button onclick="handleLogin()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold hover:opacity-90">🔐 Login करें</button>
       </div>
 
-      <!-- Signup Form -->
       <div id="form-signup" class="space-y-3 hidden">
         <input id="reg-name" type="text" placeholder="आपका पूरा नाम" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 outline-none" />
         <input id="reg-user" type="text" placeholder="नया Username" class="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 outline-none" />
@@ -45,9 +71,8 @@
         <button onclick="handleSignup()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold">📝 Account बनाएं</button>
       </div>
 
-      <!-- Guest Form -->
       <div id="form-guest" class="space-y-4 hidden text-center py-4">
-        <p class="text-gray-300 text-sm">बिना अकाउंट बनाए तुरंत जुगनू AI का उपयोग शुरू करें।</p>
+        <p class="text-gray-300 text-sm">बिना अकाउंट बनाए तुरंत Jugnu AI का उपयोग शुरू करें।</p>
         <button onclick="handleGuest()" class="w-full py-2.5 rounded-xl bg-gray-800 border border-yellow-500/40 text-yellow-400 font-semibold hover:bg-gray-700">👤 Guest के रूप में आगे बढ़ें</button>
       </div>
       <p id="auth-msg" class="text-center text-sm text-red-400 mt-3"></p>
@@ -55,27 +80,33 @@
   </div>
 
   <!-- MAIN CHAT APP SCREEN -->
-  <div id="app-screen" class="hidden flex-1 flex h-full overflow-hidden">
-    
+  <div id="app-screen" class="hidden flex-1 flex h-full overflow-hidden relative">
+
+    <!-- MOBILE BACKDROP -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-black/60 z-30 md:hidden"></div>
+
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="w-72 bg-gray-900 border-r border-gray-800 flex flex-col justify-between p-4 overflow-y-auto">
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 panel-bg border-r flex flex-col justify-between p-4 overflow-y-auto transform -translate-x-full md:translate-x-0 transition-transform duration-200">
       <div>
-        <div class="flex items-center gap-3 pb-4 border-b border-gray-800">
-          <img src="assets/jugnu-logo.png" onerror="this.style.display='none'" class="w-11 h-11 rounded-full border border-yellow-400 object-cover" />
-          <div>
-            <h2 class="font-bold text-lg gold-text">जुगनू AI</h2>
-            <p id="user-badge" class="text-xs text-gray-400">नमस्ते!</p>
+        <div class="flex items-center justify-between pb-3 border-b" style="border-color: var(--border-col);">
+          <div class="flex items-center gap-2.5">
+            <img src="assets/jugnu-logo.png" onerror="this.style.display='none'" class="w-10 h-10 rounded-full border border-yellow-400 object-cover" />
+            <div>
+              <h2 class="font-bold text-lg gold-text leading-tight">Jugnu AI</h2>
+              <p id="user-badge" class="text-xs opacity-70">नमस्ते!</p>
+            </div>
           </div>
+          <button onclick="toggleSidebar(false)" class="md:hidden text-lg px-2 opacity-70">✖</button>
         </div>
 
-        <button onclick="startNewChat()" class="w-full mt-4 py-2.5 px-4 rounded-xl bg-yellow-500/15 border border-yellow-500/40 text-yellow-400 font-semibold hover:bg-yellow-500/25 flex items-center justify-center gap-2">
-          ➕ नई चैट
+        <button onclick="startNewChat(); toggleSidebar(false);" class="w-full mt-3 py-2.5 px-4 rounded-xl bg-yellow-500/15 border border-yellow-500/40 text-yellow-500 font-semibold hover:bg-yellow-500/25 flex items-center justify-center gap-2 text-sm">
+          ➕ नई चैट (New Chat)
         </button>
 
         <!-- Toggles -->
-        <div class="mt-4 space-y-2 text-sm bg-gray-800/60 p-3 rounded-xl">
+        <div class="mt-3 space-y-2 text-xs card-bg border p-3 rounded-xl">
           <label class="flex items-center justify-between cursor-pointer">
-            <span>🌐 Web Search</span>
+            <span>🌐 Live Web Search</span>
             <input type="checkbox" id="toggle-search" class="accent-yellow-400 w-4 h-4" />
           </label>
           <label class="flex items-center justify-between cursor-pointer">
@@ -85,114 +116,149 @@
         </div>
 
         <!-- Settings -->
-        <div class="mt-4 bg-gray-800/60 p-3 rounded-xl space-y-2 text-xs">
-          <div class="font-semibold text-yellow-400 text-sm mb-1">⚙️ Settings</div>
-          <label class="block text-gray-400">Language</label>
-          <select id="set-lang" class="w-full p-2 rounded bg-gray-900 border border-gray-700 text-white">
-            <option value="Hindi">Hindi</option>
-            <option value="English">English</option>
-            <option value="Hindi + English">Hindi + English</option>
-          </select>
-          <label class="block text-gray-400">अंदाज (Bot Mode)</label>
-          <select id="set-mode" class="w-full p-2 rounded bg-gray-900 border border-gray-700 text-white">
-            <option value="दोस्ताना">दोस्ताना</option>
-            <option value="शिक्षक">शिक्षक</option>
-            <option value="कहानीकार">कहानीकार</option>
-            <option value="मारवाड़ी / राजस्थानी">मारवाड़ी / राजस्थानी</option>
-          </select>
-          <label class="block text-gray-400">Voice Speed</label>
-          <select id="set-speed" class="w-full p-2 rounded bg-gray-900 border border-gray-700 text-white">
-            <option value="सामान्य">सामान्य</option>
-            <option value="धीमी">धीमी</option>
-          </select>
+        <div class="mt-3 card-bg border p-3 rounded-xl space-y-2 text-xs">
+          <div class="font-semibold text-yellow-500 text-sm">⚙️ AI & Voice Settings</div>
+          <div>
+            <label class="block opacity-70 mb-0.5">Language</label>
+            <select id="set-lang" class="w-full p-1.5 rounded panel-bg border text-xs outline-none">
+              <option value="Hindi">Hindi</option>
+              <option value="English">English</option>
+              <option value="Hindi + English">Hinglish (Hindi + English)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block opacity-70 mb-0.5">अंदाज (Bot Mode)</label>
+            <select id="set-mode" class="w-full p-1.5 rounded panel-bg border text-xs outline-none">
+              <option value="दोस्ताना">दोस्ताना</option>
+              <option value="शिक्षक">शिक्षक</option>
+              <option value="कहानीकार">कहानीकार</option>
+              <option value="मारवाड़ी / राजस्थानी">मारवाड़ी / राजस्थानी</option>
+              <option value="Pro Coder">Pro Coder</option>
+            </select>
+          </div>
+          <div>
+            <label class="block opacity-70 mb-0.5">Custom Personality (Optional)</label>
+            <input id="set-custom" type="text" placeholder="जैसे: हमेशा छोटे और सटीक जवाब दो" class="w-full p-1.5 rounded panel-bg border text-xs outline-none" />
+          </div>
+          <div>
+            <label class="block opacity-70 mb-0.5">Voice Speed</label>
+            <select id="set-speed" class="w-full p-1.5 rounded panel-bg border text-xs outline-none">
+              <option value="सामान्य">सामान्य</option>
+              <option value="धीमी">धीमी</option>
+            </select>
+          </div>
           <button onclick="saveUserSettings()" class="w-full py-1.5 mt-1 rounded bg-yellow-500 text-black font-bold">💾 Save Settings</button>
         </div>
 
         <!-- Chat History -->
-        <div class="mt-4">
-          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">💬 Chat History</div>
-          <div id="chat-list" class="space-y-1 max-h-40 overflow-y-auto text-sm"></div>
+        <div class="mt-3">
+          <div class="text-xs font-semibold opacity-60 uppercase mb-1.5">💬 Chat History</div>
+          <div id="chat-list" class="space-y-1 max-h-36 overflow-y-auto text-xs"></div>
         </div>
       </div>
 
       <!-- Creator & Logout -->
-      <div class="pt-3 border-t border-gray-800 space-y-2 text-xs">
-        <div class="bg-gray-800/80 p-2.5 rounded-xl border border-yellow-500/20">
-          <div class="font-bold text-yellow-400">👨‍💻 निर्माता: अरविंद सिंह</div>
-          <div class="text-gray-400 mt-0.5">पिता: Mr Rewant Singh • Doojasar (Shri Mohangarh)</div>
+      <div class="pt-3 border-t space-y-2 text-xs" style="border-color: var(--border-col);">
+        <div class="card-bg p-2.5 rounded-xl border border-yellow-500/20">
+          <div class="font-bold text-yellow-500">👨‍💻 निर्माता: अरविंद सिंह</div>
+          <div class="opacity-70 mt-0.5">Mr Rewant Singh • Doojasar (Shri Mohangarh)</div>
         </div>
         <button onclick="logout()" class="w-full py-2 rounded-xl bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25 font-semibold">🚪 Logout</button>
       </div>
     </aside>
 
     <!-- MAIN CHAT AREA -->
-    <main class="flex-1 flex flex-col bg-gray-950">
-      <!-- Top Bar -->
-      <header class="h-14 border-b border-gray-800 px-4 flex items-center justify-between bg-gray-900/60">
+    <main class="flex-1 flex flex-col min-w-0">
+      <!-- Top Header -->
+      <header class="h-14 border-b panel-bg px-3 md:px-4 flex items-center justify-between gap-2 shrink-0">
         <div class="flex items-center gap-2">
-          <span class="text-lg font-bold gold-text">✨ जुगनू AI</span>
-          <span id="plan-tag" class="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/40">VIP PRO</span>
+          <button onclick="toggleSidebar(true)" class="md:hidden p-2 rounded-lg card-bg border text-sm">☰</button>
+          <span class="text-base md:text-lg font-bold gold-text">Jugnu AI</span>
+          <span id="plan-tag" class="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/40">VIP PRO</span>
         </div>
-        <div class="flex items-center gap-2 text-xs">
-          <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700">
-            📄 PDF/TXT पढ़ाएँ
-            <input type="file" id="doc-upload" accept=".pdf,.txt" class="hidden" onchange="uploadDoc(this)" />
-          </label>
-          <button onclick="openNotesModal()" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700">📝 Diary / Memory</button>
+
+        <!-- AI Model Switcher + Tools -->
+        <div class="flex items-center gap-1.5 md:gap-2 text-xs">
+          <select id="ai-provider" title="AI Engine चुनें" class="px-2 py-1.5 rounded-lg card-bg border font-semibold text-yellow-400 outline-none">
+            <option value="groq">⚡ Groq (Fast)</option>
+            <option value="gemini">🧠 Gemini (Smart)</option>
+          </select>
+
+          <button onclick="toggleTheme()" id="theme-btn" title="Dark / Light Mode" class="px-2.5 py-1.5 rounded-lg card-bg border">☀️</button>
+
+          <button onclick="openNotesModal()" class="px-2.5 py-1.5 rounded-lg card-bg border">📝 <span class="hidden sm:inline">Diary</span></button>
         </div>
       </header>
 
       <!-- Quick Actions -->
-      <div class="px-4 py-2 bg-gray-900/30 border-b border-gray-800/60 flex gap-2 overflow-x-auto text-xs">
-        <button onclick="sendQuick('मुझे पढ़ाई की एक अच्छी strategy बताओ।')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-gray-700 whitespace-nowrap">📚 पढ़ाई में मदद</button>
-        <button onclick="sendQuick('आज मुझे कोई useful और interesting चीज सिखाओ।')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-gray-700 whitespace-nowrap">💡 आज कुछ सिखाओ</button>
-        <button onclick="sendQuick('मुझे कुछ मजेदार सुनाओ।')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-gray-700 whitespace-nowrap">😂 कुछ मजेदार</button>
-        <button onclick="sendQuick('मुझे एक छोटी और interesting कहानी सुनाओ।')" class="px-3 py-1.5 rounded-full bg-gray-800 hover:bg-gray-700 whitespace-nowrap">📖 कहानी सुनाओ</button>
+      <div class="px-3 py-2 border-b panel-bg/60 flex gap-2 overflow-x-auto text-xs shrink-0">
+        <button onclick="sendQuick('मुझे पढ़ाई की एक अच्छी strategy बताओ।')" class="px-3 py-1 rounded-full card-bg border whitespace-nowrap">📚 पढ़ाई में मदद</button>
+        <button onclick="sendQuick('आज की ताज़ा मुख्य खबरें क्या हैं?')" class="px-3 py-1 rounded-full card-bg border whitespace-nowrap">📰 ताज़ा खबरें</button>
+        <button onclick="sendQuick('एक सुनहरे जुगनू की खूबसूरत तस्वीर बनाओ')" class="px-3 py-1 rounded-full card-bg border whitespace-nowrap">🎨 तस्वीर बनाओ</button>
+        <button onclick="sendQuick('मुझे एक छोटी और प्रेरणादायक कहानी सुनाओ।')" class="px-3 py-1 rounded-full card-bg border whitespace-nowrap">📖 कहानी सुनाओ</button>
       </div>
 
       <!-- Messages Box -->
-      <div id="messages-box" class="flex-1 overflow-y-auto p-4 space-y-4">
-        <div class="text-center text-gray-500 mt-10">
-          <p class="text-lg">✨ नमस्ते! मैं जुगनू हूँ।</p>
-          <p class="text-sm mt-1">मुझसे कोई भी सवाल पूछें, तस्वीर बनाने को कहें, या PDF पढ़ाएं।</p>
+      <div id="messages-box" class="flex-1 overflow-y-auto p-3 md:p-5 space-y-4">
+        <div class="text-center opacity-70 mt-10 px-4">
+          <p class="text-xl font-bold gold-text">✨ नमस्ते! मैं Jugnu AI हूँ।</p>
+          <p class="text-sm mt-1">बोलकर या लिखकर कुछ भी पूछें, फोटो भेजकर सवाल करें, या तस्वीर बनाने को कहें।</p>
         </div>
       </div>
 
       <!-- Audio Player -->
-      <div id="audio-bar" class="hidden px-4 py-2 bg-yellow-500/10 border-t border-yellow-500/30 flex items-center justify-between">
-        <span class="text-xs text-yellow-300">🔊 जुगनू बोल रही है...</span>
-        <audio id="tts-player" controls class="h-8"></audio>
+      <div id="audio-bar" class="hidden px-4 py-1.5 bg-yellow-500/10 border-t border-yellow-500/30 flex items-center justify-between shrink-0">
+        <span class="text-xs text-yellow-400 font-medium">🔊 Jugnu AI बोल रही है...</span>
+        <audio id="tts-player" controls class="h-7"></audio>
       </div>
 
       <!-- Input Box -->
-      <div class="p-4 border-t border-gray-800 bg-gray-900/80">
-        <div id="file-badge" class="hidden text-xs text-green-400 mb-2"></div>
-        <div class="flex gap-2">
-          <input id="chat-input" type="text" onkeydown="if(event.key==='Enter') sendMessage()" placeholder="जुगनू से कुछ पूछिए... (जैसे: एक सुनहरे जुगनू की तस्वीर बनाओ)" class="flex-1 px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 focus:border-yellow-400 outline-none text-sm" />
-          <button onclick="sendMessage()" id="send-btn" class="px-5 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold hover:opacity-90">भेजें ➤</button>
+      <div class="p-2.5 md:p-4 border-t panel-bg shrink-0">
+        <div id="file-badge" class="hidden text-xs text-green-400 mb-2 flex items-center justify-between card-bg px-3 py-1.5 rounded-lg border border-green-500/30">
+          <span id="file-badge-text"></span>
+          <button onclick="clearAttachment()" class="text-red-400 font-bold ml-2">✖</button>
+        </div>
+
+        <div class="flex items-center gap-1.5 md:gap-2">
+          <!-- File / Photo Upload -->
+          <label title="Photo, PDF या TXT भेजें" class="cursor-pointer p-3 rounded-xl card-bg border hover:border-yellow-400 shrink-0">
+            📎
+            <input type="file" id="doc-upload" accept=".pdf,.txt,.png,.jpg,.jpeg,.webp" class="hidden" onchange="uploadAttachment(this)" />
+          </label>
+
+          <!-- Mic Button -->
+          <button onclick="toggleRecording()" id="mic-btn" title="बोलकर पूछें" class="p-3 rounded-xl card-bg border hover:border-yellow-400 shrink-0">
+            🎙️
+          </button>
+
+          <input id="chat-input" type="text" onkeydown="if(event.key==='Enter') sendMessage()" placeholder="Jugnu AI से कुछ पूछिए..." class="flex-1 min-w-0 px-3.5 py-3 rounded-xl card-bg border focus:border-yellow-400 outline-none text-sm" />
+
+          <button onclick="sendMessage()" id="send-btn" class="px-4 md:px-5 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold hover:opacity-90 shrink-0 text-sm">
+            भेजें ➤
+          </button>
         </div>
       </div>
     </main>
   </div>
 
   <!-- NOTES & MEMORY MODAL -->
-  <div id="notes-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-    <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-lg p-5 space-y-4 max-h-[85vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-        <h3 class="font-bold text-yellow-400">🧠 Memory & 📝 Diary</h3>
-        <button onclick="closeNotesModal()" class="text-gray-400 hover:text-white">✖</button>
+  <div id="notes-modal" class="hidden fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-50">
+    <div class="panel-bg border rounded-2xl w-full max-w-lg p-5 space-y-4 max-h-[85vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b pb-2" style="border-color: var(--border-col);">
+        <h3 class="font-bold text-yellow-500">🧠 Memory & 📝 Diary</h3>
+        <button onclick="closeNotesModal()" class="opacity-70 hover:opacity-100">✖</button>
       </div>
       <div>
         <div class="flex justify-between items-center mb-1">
           <span class="text-sm font-semibold">Saved Memories</span>
           <button onclick="clearMemories()" class="text-xs text-red-400">🗑️ सब मिटाएं</button>
         </div>
-        <div id="memory-list" class="text-xs text-gray-300 bg-gray-800 p-2.5 rounded-lg space-y-1 max-h-28 overflow-y-auto"></div>
+        <div id="memory-list" class="text-xs card-bg border p-2.5 rounded-lg space-y-1 max-h-28 overflow-y-auto"></div>
       </div>
       <div class="space-y-2">
         <span class="text-sm font-semibold block">नया Note / Reminder जोड़ें</span>
-        <input id="note-title" type="text" placeholder="Title" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-sm" />
-        <textarea id="note-content" placeholder="अपना नोट लिखें..." class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-sm h-20"></textarea>
+        <input id="note-title" type="text" placeholder="Title" class="w-full p-2 rounded card-bg border text-sm outline-none" />
+        <textarea id="note-content" placeholder="अपना नोट लिखें..." class="w-full p-2 rounded card-bg border text-sm h-20 outline-none"></textarea>
         <button onclick="saveNote()" class="w-full py-2 rounded bg-yellow-500 text-black font-bold text-sm">💾 Save Note</button>
       </div>
       <div id="notes-list" class="space-y-2 text-xs"></div>
@@ -204,6 +270,32 @@
     let currentUser = JSON.parse(localStorage.getItem("jugnu_user") || "null");
     let currentConvId = null;
     let uploadedFileContext = "";
+    let uploadedImageBase64 = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+
+    function toggleSidebar(open) {
+      const sb = document.getElementById("sidebar");
+      const bd = document.getElementById("sidebar-backdrop");
+      if (open) {
+        sb.classList.remove("-translate-x-full");
+        bd.classList.remove("hidden");
+      } else {
+        sb.classList.add("-translate-x-full");
+        bd.classList.add("hidden");
+      }
+    }
+
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle("light-theme");
+      document.getElementById("theme-btn").innerText = isLight ? "🌙" : "☀️";
+      localStorage.setItem("jugnu_theme", isLight ? "light" : "dark");
+    }
+    if (localStorage.getItem("jugnu_theme") === "light") {
+      document.body.classList.add("light-theme");
+      document.getElementById("theme-btn").innerText = "🌙";
+    }
 
     function switchAuthTab(tab) {
       ["login", "signup", "guest"].forEach(t => {
@@ -268,14 +360,17 @@
       if (!currentUser) return;
       document.getElementById("auth-screen").classList.add("hidden");
       document.getElementById("app-screen").classList.remove("hidden");
-      document.getElementById("user-badge").innerText = `👋 नमस्ते, ${currentUser.name}`;
+      document.getElementById("user-badge").innerText = `👋 ${currentUser.name}`;
       document.getElementById("plan-tag").innerText = currentUser.plan || "FREE";
 
-      const setRes = await fetch(`${API_URL}/api/settings/${currentUser.username}`);
-      const settings = await setRes.json();
-      document.getElementById("set-lang").value = settings.language;
-      document.getElementById("set-mode").value = settings.bot_mode;
-      document.getElementById("set-speed").value = settings.voice_speed;
+      try {
+        const setRes = await fetch(`${API_URL}/api/settings/${currentUser.username}`);
+        const settings = await setRes.json();
+        document.getElementById("set-lang").value = settings.language || "Hindi";
+        document.getElementById("set-mode").value = settings.bot_mode || "दोस्ताना";
+        document.getElementById("set-speed").value = settings.voice_speed || "सामान्य";
+        document.getElementById("set-custom").value = settings.custom_prompt || "";
+      } catch (e) {}
 
       await loadConversations();
     }
@@ -287,7 +382,8 @@
           username: currentUser.username,
           language: document.getElementById("set-lang").value,
           bot_mode: document.getElementById("set-mode").value,
-          voice_speed: document.getElementById("set-speed").value
+          voice_speed: document.getElementById("set-speed").value,
+          custom_prompt: document.getElementById("set-custom").value
         })
       });
       alert("Settings save हो गईं!");
@@ -300,16 +396,16 @@
       list.innerHTML = "";
       convs.forEach(c => {
         const div = document.createElement("div");
-        div.className = "flex justify-between items-center p-2 rounded-lg hover:bg-gray-800 cursor-pointer text-gray-300";
-        div.innerHTML = `<span onclick="openConversation(${c.id})" class="truncate flex-1">💬 ${c.title}</span>
+        div.className = "flex justify-between items-center p-2 rounded-lg hover:bg-yellow-500/10 cursor-pointer";
+        div.innerHTML = `<span onclick="openConversation(${c.id}); toggleSidebar(false);" class="truncate flex-1">💬 ${c.title}</span>
                          <button onclick="deleteConv(${c.id})" class="text-xs text-red-400 ml-2">🗑️</button>`;
         list.appendChild(div);
       });
     }
 
-    async function startNewChat() {
+    function startNewChat() {
       currentConvId = null;
-      document.getElementById("messages-box").innerHTML = `<div class="text-center text-gray-500 mt-10">✨ नई चैट शुरू हुई। कुछ पूछिए...</div>`;
+      document.getElementById("messages-box").innerHTML = `<div class="text-center opacity-70 mt-10">✨ नई चैट शुरू हुई। कुछ पूछिए...</div>`;
     }
 
     async function openConversation(id) {
@@ -333,13 +429,19 @@
       wrap.className = role === "user" ? "flex justify-end" : "flex justify-start";
       const bubble = document.createElement("div");
       bubble.className = role === "user"
-        ? "max-w-xl bg-yellow-500/20 border border-yellow-500/40 text-white px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap"
-        : "max-w-2xl bg-gray-900 border border-gray-800 text-gray-100 px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap";
-      bubble.innerHTML = `<div class="text-xs font-bold mb-1 ${role === 'user' ? 'text-yellow-400' : 'text-amber-400'}">${role === 'user' ? '👤 आप' : '✨ जुगनू AI'}</div>${text}`;
+        ? "max-w-[85%] md:max-w-xl bg-yellow-500/20 border border-yellow-500/40 px-4 py-3 rounded-2xl text-sm"
+        : "max-w-[90%] md:max-w-2xl card-bg border px-4 py-3 rounded-2xl text-sm prose";
+
+      const formattedHtml = role === "assistant" && window.marked ? marked.parse(text) : text.replace(/\n/g, "<br>");
+      bubble.innerHTML = `<div class="flex justify-between items-center text-xs font-bold mb-1 ${role === 'user' ? 'text-yellow-500' : 'text-amber-500'}">
+          <span>${role === 'user' ? '👤 आप' : '✨ Jugnu AI'}</span>
+          ${role === 'assistant' ? `<button onclick="navigator.clipboard.writeText(this.parentElement.parentElement.innerText)" class="opacity-60 hover:opacity-100 text-[11px]">📋 Copy</button>` : ''}
+        </div><div>${formattedHtml}</div>`;
+
       if (imgB64) {
         const img = document.createElement("img");
         img.src = "data:image/jpeg;base64," + imgB64;
-        img.className = "mt-3 rounded-xl max-w-sm border border-gray-700";
+        img.className = "mt-3 rounded-xl max-w-xs md:max-w-sm border border-gray-700";
         bubble.appendChild(img);
       }
       wrap.appendChild(bubble);
@@ -348,6 +450,7 @@
     }
 
     function sendQuick(text) {
+      if (text.includes("खबरें")) document.getElementById("toggle-search").checked = true;
       document.getElementById("chat-input").value = text;
       sendMessage();
     }
@@ -355,15 +458,20 @@
     async function sendMessage() {
       const input = document.getElementById("chat-input");
       const prompt = input.value.trim();
-      if (!prompt) return;
+      if (!prompt && !uploadedImageBase64) return;
+      const finalPrompt = prompt || "इस तस्वीर में क्या है? विस्तार से बताओ।";
       input.value = "";
 
       if (!currentConvId) document.getElementById("messages-box").innerHTML = "";
-      appendMessage("user", prompt);
+      appendMessage("user", finalPrompt, uploadedImageBase64);
+
+      const imgToSend = uploadedImageBase64;
+      const docToSend = uploadedFileContext;
+      clearAttachment();
 
       const btn = document.getElementById("send-btn");
       btn.disabled = true;
-      btn.innerText = "सोच रही है...";
+      btn.innerText = "...";
 
       try {
         const res = await fetch(`${API_URL}/api/chat`, {
@@ -371,10 +479,12 @@
           body: JSON.stringify({
             username: currentUser.username,
             conversation_id: currentConvId,
-            prompt: prompt,
+            prompt: finalPrompt,
+            ai_provider: document.getElementById("ai-provider").value,
             web_search_enabled: document.getElementById("toggle-search").checked,
             voice_response: document.getElementById("toggle-voice").checked,
-            file_context: uploadedFileContext
+            file_context: docToSend,
+            uploaded_image_base64: imgToSend
           })
         });
         const data = await res.json();
@@ -390,23 +500,76 @@
         }
         loadConversations();
       } catch (e) {
-        appendMessage("assistant", "सर्वर से जुड़ने में समस्या आई। कृपया जाँचें कि Backend चालू है।");
+        appendMessage("assistant", "सर्वर से जुड़ने में समस्या आई (अगर सर्वर सो रहा था तो 30 सेकंड बाद फिर से भेजें)।");
       } finally {
         btn.disabled = false;
         btn.innerText = "भेजें ➤";
       }
     }
 
-    async function uploadDoc(input) {
+    async function uploadAttachment(input) {
       if (!input.files.length) return;
+      const badge = document.getElementById("file-badge");
+      const badgeText = document.getElementById("file-badge-text");
+      badgeText.innerText = "⏳ फाइल अपलोड हो रही है...";
+      badge.classList.remove("hidden");
+
       const formData = new FormData();
       formData.append("file", input.files[0]);
       const res = await fetch(`${API_URL}/api/upload-doc`, {method: "POST", body: formData});
       const data = await res.json();
-      uploadedFileContext = data.text;
-      const badge = document.getElementById("file-badge");
-      badge.innerText = `📄 जुड़ी हुई फाइल: ${data.filename} (अब इससे जुड़े सवाल पूछें)`;
-      badge.classList.remove("hidden");
+
+      if (data.type === "image") {
+        uploadedImageBase64 = data.image_base64;
+        uploadedFileContext = "";
+        badgeText.innerText = `🖼️ फोटो जुड़ी: ${data.filename} (अब इससे जुड़ा सवाल पूछें)`;
+      } else {
+        uploadedFileContext = data.text;
+        uploadedImageBase64 = null;
+        badgeText.innerText = `📄 फाइल जुड़ी: ${data.filename} (अब इससे जुड़ा सवाल पूछें)`;
+      }
+    }
+
+    function clearAttachment() {
+      uploadedFileContext = "";
+      uploadedImageBase64 = null;
+      document.getElementById("doc-upload").value = "";
+      document.getElementById("file-badge").classList.add("hidden");
+    }
+
+    async function toggleRecording() {
+      const micBtn = document.getElementById("mic-btn");
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+            const formData = new FormData();
+            formData.append("file", audioBlob, "voice.webm");
+            micBtn.innerText = "⏳";
+            const res = await fetch(`${API_URL}/api/transcribe`, { method: "POST", body: formData });
+            const data = await res.json();
+            micBtn.innerText = "🎙️";
+            if (data.text) {
+              document.getElementById("chat-input").value = data.text;
+              sendMessage();
+            }
+          };
+          mediaRecorder.start();
+          isRecording = true;
+          micBtn.innerText = "⏹️";
+          micBtn.classList.add("border-red-500", "bg-red-500/20");
+        } catch (err) {
+          alert("Mic की अनुमति (Permission) दें।");
+        }
+      } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        micBtn.classList.remove("border-red-500", "bg-red-500/20");
+      }
     }
 
     async function openNotesModal() {
@@ -420,7 +583,7 @@
       const noteRes = await fetch(`${API_URL}/api/notes/${currentUser.username}`);
       const notes = await noteRes.json();
       document.getElementById("notes-list").innerHTML = notes.map(n =>
-        `<div class="p-2 bg-gray-800 rounded border border-gray-700"><b class="text-yellow-400">${n.title}</b><p class="text-gray-300 mt-1">${n.content}</p></div>`
+        `<div class="p-2 card-bg rounded border"><b class="text-yellow-500">${n.title}</b><p class="opacity-80 mt-1">${n.content}</p></div>`
       ).join("");
     }
 
